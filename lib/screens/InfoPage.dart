@@ -35,8 +35,7 @@ class InfoPage extends StatefulWidget {
 }
 
 class _InfoPageState extends State<InfoPage> {
-  var i;
-  var b = true;
+  var accountData;
   @override
   Widget build(BuildContext context) {
     final AuthService _auth = AuthService();
@@ -51,13 +50,32 @@ class _InfoPageState extends State<InfoPage> {
                 Icons.exit_to_app,
               ),
               onPressed: () async {
-                await _auth.signOut();
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Confirm Sign Out"),
+                        content: Text('Are you sure you want to sign out?'),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('Cancel'),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          FlatButton(
+                            child: Text('Sign Out',
+                                style: TextStyle(color: Colors.red)),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                              await _auth.signOut();
+                            },
+                          )
+                        ],
+                      );
+                    });
               })
         ],
       ),
-      body: b
-          ? Padding(padding: EdgeInsets.all(8), child: CustomUserList())
-          : Center(child: Text('Noob')),
+      body: Padding(padding: EdgeInsets.all(8), child: CustomUserList()),
       bottomNavigationBar: BottomAppBar(
         child: Container(
           height: 60,
@@ -70,15 +88,15 @@ class _InfoPageState extends State<InfoPage> {
                     onPressed: () {
                       createUser(context);
                     }),
-                IconButton(
-                    icon: Icon(Icons.insert_chart,
-                        size: 35, color: colors['accent-dark']),
-                    onPressed: () {
-                      print(b);
-                      setState(() {
-                        b = !b;
-                      });
-                    }),
+                // IconButton(
+                //     icon: Icon(Icons.insert_chart,
+                //         size: 35, color: colors['accent-dark']),
+                //     onPressed: () {
+                //       print(b);
+                //       setState(() {
+                //         b = !b;
+                //       });
+                //     }),
                 // IconButton(
                 //     icon: Icon(Icons.monetization_on,
                 //         size: 35, color: colors['accent-dark']),
@@ -98,7 +116,7 @@ class _InfoPageState extends State<InfoPage> {
   void createUser(BuildContext context) {
     final nameController = TextEditingController();
     var account = Provider.of<FirebaseUser>(context, listen: false);
-    i = DatabaseService(account.uid);
+    accountData = DatabaseService(account.uid);
     bool checkBoxVal = false;
 
     showDialog(
@@ -137,7 +155,7 @@ class _InfoPageState extends State<InfoPage> {
                                     Text('Continue', style: promptSubmitText),
                                 onPressed: () async {
                                   Navigator.of(context).pop(context);
-                                  await i.newAccountUser(
+                                  await accountData.newAccountUser(
                                       name: nameController.text,
                                       isAdmin: checkBoxVal);
 
@@ -159,19 +177,22 @@ class _InfoPageState extends State<InfoPage> {
 
     final _formKey = GlobalKey<FormState>();
 
-    i = DatabaseService(account.uid);
+    accountData = DatabaseService(account.uid);
     List<bool> spendablesHaveVal = [
       (spendable[0] == -1) ? false : true,
       (spendable[1] == -1) ? false : true
     ];
 
     var childController = TextEditingController();
-    childController.text = spendable[1].toString();
-    bool childHasVal = spendablesHaveVal[1];
-
     var parentController = TextEditingController();
-    parentController.text = spendable[0].toString();
+    bool childHasVal = spendablesHaveVal[1];
     bool parentHasVal = spendablesHaveVal[0];
+    if (childHasVal) {
+      childController.text = spendable[1].toString();
+    }
+    if (parentHasVal) {
+      parentController.text = spendable[0].toString();
+    }
 
     showDialog(
         context: context,
@@ -278,7 +299,8 @@ class _InfoPageState extends State<InfoPage> {
                                       childRet = -1;
                                     }
 
-                                    i.setSpendable(parentRet, childRet);
+                                    accountData.setSpendable(
+                                        parentRet, childRet);
                                   }
                                 },
                                 child: Text(

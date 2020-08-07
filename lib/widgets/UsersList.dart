@@ -25,9 +25,7 @@ class _CustomUserListState extends State<CustomUserList> {
         return;
       },
       child: ListView(
-          children: accountInfo.map((user) {
-        return UserInfoCard(user);
-      }).toList()),
+          children: accountInfo.map((user) => UserInfoCard(user)).toList()),
     );
   }
 }

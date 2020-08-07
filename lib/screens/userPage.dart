@@ -10,7 +10,6 @@ import '../services/database.dart';
 import 'dart:core';
 import '../shops.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../widgets/userChart.dart';
 import '../widgets/userPageHeader.dart';
 
 class UserPageWithProvider extends StatelessWidget {
@@ -40,16 +39,9 @@ class UserPageWithProvider extends StatelessWidget {
   }
 }
 
-class UserPage extends StatefulWidget {
+class UserPage extends StatelessWidget {
   final String userID;
   UserPage(this.userID);
-  @override
-  _UserPageState createState() => _UserPageState(userID);
-}
-
-class _UserPageState extends State<UserPage> {
-  final String userID;
-  _UserPageState(this.userID);
 
   // String error = '';
   int showChart = 0;
@@ -88,15 +80,6 @@ class _UserPageState extends State<UserPage> {
               : Column(
                   children: <Widget>[
                     UserPageHeader(user, spendable),
-                    // showChart
-                    // ? FractionallySizedBox(
-                    // ?
-                    Container(
-                      child: UserChart(user),
-                      // heightFactor: 0.3,
-                      height: 269,
-                    ),
-                    // : Container(),
                     PurchaseList(userID),
                   ],
                 )),
@@ -106,15 +89,15 @@ class _UserPageState extends State<UserPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              IconButton(
-                  icon: Icon(Icons.insert_chart,
-                      size: 35, color: colors['accent-dark']),
-                  onPressed: () {
-                    setState(() {
-                      // showChart += 1;
-                    });
-                    // print(showChart);
-                  }),
+              // IconButton(
+              //     icon: Icon(Icons.insert_chart,
+              //         size: 35, color: colors['accent-dark']),
+              //     onPressed: () {
+              //       setState(() {
+              //         // showChart += 1;
+              //       });
+              //       // print(showChart);
+              //     }),
               IconButton(
                   icon: Icon(Icons.add, size: 35, color: colors['accent-dark']),
                   onPressed: () {
