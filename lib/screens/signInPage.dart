@@ -38,68 +38,93 @@ class _SignInPageState extends State<SignInPage> {
       body: loading
           ? Center(child: CircularProgressIndicator())
           : Container(
+              // color: Colors.red,
               padding: EdgeInsets.all(30),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'email'),
-                      validator: (val) {
-                        return (RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(val))
-                            ? null
-                            : 'Please enter a valid email';
-                      },
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'password'),
-                      validator: (val) {
-                        return (val == null) ? 'Enter a password' : null;
-                      },
-                      controller: passwordController,
-                      obscureText: true,
-                    ),
-                    FlatButton(
-                      child: Text(
-                        'Don\'t have an account? Sign Up Here',
-                        style: linkText,
-                      ),
-                      onPressed: widget.toggleView,
-                    ),
-                    FlatButton(
-                      child: Container(
+              child: Center(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: colors['accent-light'],
+                            color: colors['primary-light'].withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(15)),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'email',
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 10)),
+                          validator: (val) {
+                            return (RegExp(
+                                        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    .hasMatch(val))
+                                ? null
+                                : 'Please enter a valid email';
+                          },
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
                         ),
-                        padding: EdgeInsets.all(12),
-                        child: Text('Sign In'),
                       ),
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          setState(() => loading = true);
-                          var result = await _auth.signIn(
-                              emailController.text, passwordController.text);
-                          if (result == null) {
-                            setState(() {
-                              loading = false;
-                              error =
-                                  'Email and password do not match. Try again';
-                              passwordController.text = '';
-                            });
+                      SizedBox(height: 10),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: colors['primary-light'].withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                              hintText: 'password',
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 10)),
+                          validator: (val) {
+                            return (val == null) ? 'Enter a password' : null;
+                          },
+                          controller: passwordController,
+                          obscureText: true,
+                        ),
+                      ),
+                      FlatButton(
+                        child: Text(
+                          'Don\'t have an account? Sign Up Here',
+                          style: linkText,
+                        ),
+                        onPressed: widget.toggleView,
+                      ),
+                      FlatButton(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: colors['accent-light'],
+                          ),
+                          padding: EdgeInsets.all(12),
+                          child: Text('Sign In'),
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState.validate()) {
+                            setState(() => loading = true);
+                            var result = await _auth.signIn(
+                                emailController.text, passwordController.text);
+                            if (result == null) {
+                              setState(() {
+                                loading = false;
+                                error =
+                                    'Email and password do not match. Try again';
+                                passwordController.text = '';
+                              });
+                            }
                           }
-                        }
-                      },
-                    ),
-                    Text(
-                      error,
-                      style: errorText,
-                    )
-                  ],
+                        },
+                      ),
+                      Text(
+                        error,
+                        style: errorText,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -11,6 +11,7 @@ import 'dart:core';
 import '../shops.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/userPageHeader.dart';
+import '../widgets/userChart.dart';
 
 class UserPageWithProvider extends StatelessWidget {
   final String userID;
@@ -44,76 +45,89 @@ class UserPage extends StatelessWidget {
   UserPage(this.userID);
 
   // String error = '';
-  int showChart = 0;
+  // int showChart = 0;
 
   @override
   Widget build(BuildContext context) {
-    var usersList = Provider.of<List<User>>(context);
-    var user;
-    usersList.forEach((User userI) {
+    List<User> usersList = Provider.of<List<User>>(context);
+    User user;
+    for (User userI in usersList) {
       if (userI.id == userID) {
         user = userI;
+        break;
       }
-    });
+    }
+    // assert(user != null);
 
-    var spendable = Provider.of<List<int>>(context);
+    List<int> spendable = Provider.of<List<int>>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: colors['primary-dark'],
-        title: Text('${user.name}\'s Budget', style: appBarText),
-      ),
-      body: Padding(
-          padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-          // padding: EdgeInsets.all(8),
-          child: (user.total == 0)
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
+    return (user == null)
+        ? Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: colors['primary-dark'],
+              title: Text('loading', style: appBarText),
+            ),
+            body: Center(child: CircularProgressIndicator()),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: colors['primary-dark'],
+              title: Text('${user.name}\'s Budget', style: appBarText),
+            ),
+            body: Padding(
+                padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                // padding: EdgeInsets.all(8),
+                child: (user.total == 0)
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          UserPageHeader(user, spendable),
+                          Expanded(
+                            child: Center(child: Text('No purchases')),
+                          )
+                        ],
+                      )
+                    : Column(
+                        children: <Widget>[
+                          UserPageHeader(user, spendable),
+                          // UserChart(user),
+                          PurchaseList(userID),
+                        ],
+                      )),
+            bottomNavigationBar: BottomAppBar(
+              child: Container(
+                height: 60,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    UserPageHeader(user, spendable),
-                    Expanded(
-                      child: Center(child: Text('No purchases')),
-                    )
+                    // IconButton(
+                    //     icon: Icon(Icons.insert_chart,
+                    //         size: 35, color: colors['accent-dark']),
+                    //     onPressed: () {
+                    //       setState(() {
+                    //         // showChart += 1;
+                    //       });
+                    //       // print(showChart);
+                    //     }),
+                    IconButton(
+                        icon: Icon(Icons.add,
+                            size: 35, color: colors['accent-dark']),
+                        onPressed: () {
+                          createPurchase(context, user);
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.home,
+                            size: 35, color: colors['accent-dark']),
+                        onPressed: () {
+                          navInfoPage(context);
+                        }),
                   ],
-                )
-              : Column(
-                  children: <Widget>[
-                    UserPageHeader(user, spendable),
-                    PurchaseList(userID),
-                  ],
-                )),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              // IconButton(
-              //     icon: Icon(Icons.insert_chart,
-              //         size: 35, color: colors['accent-dark']),
-              //     onPressed: () {
-              //       setState(() {
-              //         // showChart += 1;
-              //       });
-              //       // print(showChart);
-              //     }),
-              IconButton(
-                  icon: Icon(Icons.add, size: 35, color: colors['accent-dark']),
-                  onPressed: () {
-                    createPurchase(context, user);
-                  }),
-              IconButton(
-                  icon:
-                      Icon(Icons.home, size: 35, color: colors['accent-dark']),
-                  onPressed: () {
-                    navInfoPage(context);
-                  }),
-            ],
-          ),
-        ),
-      ),
-    );
+                ),
+              ),
+            ),
+          );
   }
 
   void createPurchase(BuildContext context, User user) {

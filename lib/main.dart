@@ -13,8 +13,8 @@ String firstUpper(String string) {
 List<List> categories = [
   ['food', Icon(Icons.fastfood), Color.fromRGBO(230, 158, 34, 1)],
   ['clothing', Icon(Icons.shopping_basket), Color.fromRGBO(225, 197, 240, 1)],
-  ['electronics', Icon(Icons.computer), Color.fromRGBO(79, 224, 173, 1)],
-  ['accessories', Icon(Icons.blur_circular), Color.fromRGBO(206, 212, 106, 1)],
+  ['electronic', Icon(Icons.computer), Color.fromRGBO(79, 224, 173, 1)],
+  ['accessory', Icon(Icons.blur_circular), Color.fromRGBO(206, 212, 106, 1)],
   ['transportation', Icon(Icons.local_taxi), Color.fromRGBO(114, 180, 242, 1)],
   ['entertainement', Icon(Icons.movie), Color.fromRGBO(153, 31, 143, 1)],
   ['toy', Icon(Icons.toys), Color.fromRGBO(199, 115, 74, 1)],

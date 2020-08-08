@@ -19,9 +19,9 @@ class UserChart extends StatelessWidget {
       _totals[catList[0]] = 0;
     }
     for (var purchase in user.purchases) {
-      _totals[purchase['category']] += (double.parse(purchase['price']) > 0)
+      _totals[purchase['category']] += ((double.parse(purchase['price']) > 0)
           ? double.parse(purchase['price'])
-          : 0;
+          : 0);
     }
 
     for (var catList in categories) {

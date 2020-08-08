@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../main.dart';
 import '../services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'userChart.dart';
 
 class PurchaseList extends StatelessWidget {
   final String userID;
@@ -22,17 +21,10 @@ class PurchaseList extends StatelessWidget {
       }
     });
     for (var i in user.purchases) {
-      // if (i['price'].toString().contains('.')) {
-      //   i['price'] = num.parse(i['price']);
-      // } else {
-      //   i['price'] = num.parse(i['price']);
-      // }
       i['price'] = num.parse(i['price']);
     }
     var account = Provider.of<FirebaseUser>(context);
     DatabaseService dataservice = DatabaseService(account.uid);
-
-    var _selectedCategory;
     List<DropdownMenuItem> menuItems = [];
     for (var category in categories) {
       menuItems.add(DropdownMenuItem(
@@ -48,154 +40,137 @@ class PurchaseList extends StatelessWidget {
 
     return Expanded(
       child: Container(
-          // color: Colors.blue[100],
-          // padding: EdgeInsets.all(5),
           child: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (OverscrollIndicatorNotification overscroll) {
           overscroll.disallowGlow();
           return;
         },
         child: ListView.builder(
-            itemCount: user.purchases.length + 1,
-            reverse: true,
+            itemCount: user.purchases.length,
+            reverse: false,
             itemBuilder: (BuildContext context, int index) {
-              if (index == 0) {
-                // return Container(
-                //   child: UserChart(user),
-                //   // heightFactor: 0.3,
-                //   height: 269,
-                // );
-              } else {
-                bool priceIsNegative = user.purchases[index]["price"] < 0;
-                var _tapPosition;
-                bool someNameInvented = false;
+              bool priceIsNegative = user.purchases[index]["price"] < 0;
+              var _tapPosition;
 
-                return GestureDetector(
-                  onTapDown: (details) {
-                    _tapPosition = details.globalPosition;
-                  },
-                  onLongPress: () async {
-                    final RenderBox overlay =
-                        Overlay.of(context).context.findRenderObject();
-                    var result = await showMenu(
-                        context: context,
-                        position: RelativeRect.fromRect(
-                            _tapPosition &
-                                Size(10, 10), // smaller rect, the touch area
-                            Offset.zero &
-                                overlay.size // Bigger rect, the entire screen
-                            ),
-                        items: [
-                          PopupMenuItem(
-                            value: 1,
-                            child: Row(
-                              children: <Widget>[
-                                Icon(Icons.edit),
-                                SizedBox(width: 3),
-                                Text('Edit')
-                              ],
-                            ),
-                          )
-                        ]);
-                    if (result == 1) {
-                      print('Editing');
-                      // setState(() {
-                      //   someNameInvented = true;
-                      // });
+              return GestureDetector(
+                onTapDown: (details) {
+                  _tapPosition = details.globalPosition;
+                },
+                onLongPress: () async {
+                  final RenderBox overlay =
+                      Overlay.of(context).context.findRenderObject();
+                  var result = await showMenu(
+                      context: context,
+                      position: RelativeRect.fromRect(
+                          _tapPosition &
+                              Size(10, 10), // smaller rect, the touch area
+                          Offset.zero &
+                              overlay.size // Bigger rect, the entire screen
+                          ),
+                      items: [
+                        PopupMenuItem(
+                          value: 1,
+                          child: Row(
+                            children: <Widget>[
+                              Icon(Icons.edit),
+                              SizedBox(width: 3),
+                              Text('Edit')
+                            ],
+                          ),
+                        )
+                      ]);
+                  if (result == 1) {
+                    print('Editing');
+                  }
+                },
+                child: Dismissible(
+                  direction: DismissDirection.startToEnd,
+                  onDismissed: (DismissDirection direction) async {
+                    // user.purchases.removeAt(index);
+                    var result = await dataservice.updateAccountPurchases(
+                        id: userID,
+                        del: true,
+                        purchase: {
+                          'category': user.purchases[index]["category"],
+                          'price': user.purchases[index]["price"].toString(),
+                          'name': user.purchases[index]["name"],
+                          'shop': user.purchases[index]["shop"],
+                          'date': user.purchases[index]["date"]
+                        });
+                    if (result == null) {
+                      print('FAIL');
                     }
                   },
-                  child: Dismissible(
-                    direction: DismissDirection.startToEnd,
-                    onDismissed: (DismissDirection direction) async {
-                      // user.purchases.removeAt(index);
-                      var result = await dataservice.updateAccountPurchases(
-                          id: userID,
-                          del: true,
-                          purchase: {
-                            'category': user.purchases[index]["category"],
-                            'price': user.purchases[index]["price"].toString(),
-                            'name': user.purchases[index]["name"],
-                            'shop': user.purchases[index]["shop"],
-                            'date': user.purchases[index]["date"]
-                          });
-                      if (result == null) {
-                        print('FAIL');
-                      }
-                    },
-                    // background: ,
-                    key: UniqueKey(),
-                    background: Container(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
+                  // background: ,
+                  key: UniqueKey(),
+                  background: Container(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.red,
                       ),
                     ),
-                    child: CustomCard(
-                        Row(
-                          children: <Widget>[
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  someNameInvented == true
-                                      ? Text('Hois')
-                                      : Container(),
-                                  (user.purchases[index]['name'] != '')
-                                      ? Text(
-                                          firstUpper(
-                                              user.purchases[index]['name']),
-                                          style: cardTitle)
-                                      : Text(
-                                          firstUpper(user.purchases[index]
-                                              ['category']),
-                                          style: cardTitle),
-                                  (user.purchases[index]['name'] != '')
-                                      ? Text(
-                                          firstUpper(user.purchases[index]
-                                              ['category']),
-                                          style: boldBodyText)
-                                      : Container(),
-                                  Text(
-                                      DateFormat('MMM dd, KK:mm a').format(user
-                                          .purchases[index]['date']
-                                          .toDate()),
-                                      style: italicBodyText),
-                                  (user.purchases[index]['shop'] != '')
-                                      ? Text(user.purchases[index]['shop'],
-                                          style: bodyText)
-                                      : Container()
-                                ]),
-                            Expanded(child: Container()),
-                            // Price
-                            (user.purchases[index]['price'] == 0)
-                                ? Text('\$0', style: mainPriceText)
-                                : priceIsNegative
-                                    ? Row(children: <Widget>[
-                                        Icon(
-                                          Icons.add_circle,
-                                          color: Colors.green[300],
-                                        ),
-                                        SizedBox(
-                                          width: 2,
-                                        ),
-                                        Text(
-                                          '\$${-user.purchases[index]["price"]}',
-                                          style: mainPriceText.copyWith(
-                                              color: Colors.green[300]),
-                                        )
-                                      ])
-                                    : Text(
-                                        '\$${user.purchases[index]["price"]}',
-                                        style: mainPriceText),
-                          ],
-                        ),
-                        EdgeInsets.fromLTRB(25, 15, 15, 15)),
                   ),
-                );
-              }
-            }),
+                  child: ListTile(
+                    title: (user.purchases[index]['name'] != '')
+                        ? Text(firstUpper(user.purchases[index]['name']),
+                            style: cardTitle)
+                        : Text(firstUpper(user.purchases[index]['category']),
+                            style: cardTitle),
+                    subtitle: Text(
+                        DateFormat('MMM dd, KK:mm a')
+                            .format(user.purchases[index]['date'].toDate()),
+                        style: italicBodyText),
+                    trailing: (user.purchases[index]['price'] == 0)
+                        ? Text('\$0', style: mainPriceText)
+                        : priceIsNegative
+                            ? Row(children: <Widget>[
+                                Icon(
+                                  Icons.add_circle,
+                                  color: Colors.green[300],
+                                ),
+                                SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  '\$${-user.purchases[index]["price"]}',
+                                  style: mainPriceText.copyWith(
+                                      color: Colors.green[300]),
+                                )
+                              ])
+                            : Text('\$${user.purchases[index]["price"]}',
+                                style: mainPriceText),
+                    // child: Row(
+                    //   children: <Widget>[
+                    //     Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: <Widget>[
+
+                    //           (user.purchases[index]['name'] != '')
+                    //               ? Text(
+                    //                   firstUpper(
+                    //                       user.purchases[index]['category']),
+                    //                   style: boldBodyText)
+                    //               : Container(),
+
+                    //           (user.purchases[index]['shop'] != '')
+                    //               ? Text(user.purchases[index]['shop'],
+                    //                   style: bodyText)
+                    //               : Container()
+                    //         ]),
+                    //     Expanded(child: Container()),
+                    //     // Price
+
+                    //   ],
+                    // ),
+                    // EdgeInsets.fromLTRB(25, 15, 15, 15)
+                  ),
+                ),
+              );
+            }
+            // }
+            ),
       )),
     );
   }

@@ -123,7 +123,7 @@ class _InfoPageState extends State<InfoPage> {
         context: context,
         builder: (BuildContext context) => Dialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
+                  borderRadius: BorderRadius.circular(20)),
               child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
                   return Container(
@@ -132,19 +132,31 @@ class _InfoPageState extends State<InfoPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text('Add a member', style: promptTitle),
-                        TextField(
-                            decoration: InputDecoration(hintText: 'name'),
-                            controller: nameController),
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(15)),
+                          child: TextField(
+                              decoration: InputDecoration(
+                                  hintText: 'name',
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(5)),
+                              controller: nameController),
+                        ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Checkbox(
-                                value: checkBoxVal,
-                                onChanged: (val) {
-                                  setState(() {
-                                    checkBoxVal = val;
-                                  });
-                                }),
-                            Text('Parent')
+                            Text('Parent'),
+                            Container(
+                              width: 40,
+                              child: Checkbox(
+                                  value: checkBoxVal,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      checkBoxVal = val;
+                                    });
+                                  }),
+                            ),
                           ],
                         ),
                         Row(

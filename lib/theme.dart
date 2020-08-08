@@ -55,7 +55,7 @@ var hintTextStyle = TextStyle(
   fontSize: 16,
 );
 
-var colors = {
+Map<String, Color> colors = {
   'primary': Color(0xFF33a3a3),
   'primary-light': Color(0xFF40cfcf),
   'primary-dark': Color(0xFF2c8a8a),

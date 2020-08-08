@@ -16,7 +16,6 @@ class _SignUpPageState extends State<SignUpPage> {
   bool loading = false;
   String error = '';
 
-  final TextEditingController usernameInputController = TextEditingController();
   final TextEditingController emailInputController = TextEditingController();
   final TextEditingController passwordInputController = TextEditingController();
   final TextEditingController passwordVerifyController =
@@ -46,42 +45,86 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'username'),
-                      controller: usernameInputController,
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: colors['primary-light'].withOpacity(0.7),
+                    //     borderRadius: BorderRadius.circular(15),
+                    //   ),
+                    //   child: TextFormField(
+                    //     decoration: InputDecoration(
+                    //         hintText: 'username',
+                    //         border: InputBorder.none,
+                    //         contentPadding:
+                    //             EdgeInsets.symmetric(horizontal: 10)),
+                    //     controller: usernameInputController,
+                    //   ),
+                    // ),
+                    // SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colors['primary-light'].withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            hintText: 'email',
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10)),
+                        validator: (val) {
+                          return (RegExp(
+                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(val))
+                              ? null
+                              : 'Please enter a valid email';
+                        },
+                        controller: emailInputController,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'email'),
-                      validator: (val) {
-                        return (RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(val))
-                            ? null
-                            : 'Please enter a valid email';
-                      },
-                      controller: emailInputController,
-                      keyboardType: TextInputType.emailAddress,
+                    SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colors['primary-light'].withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            hintText: 'password',
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10)),
+                        validator: (val) {
+                          return (val.length < 6)
+                              ? 'Password should contain 6 or more characters'
+                              : null;
+                        },
+                        controller: passwordInputController,
+                        obscureText: true,
+                      ),
                     ),
-                    TextFormField(
-                      decoration: InputDecoration(hintText: 'password'),
-                      validator: (val) {
-                        return (val.length < 6)
-                            ? 'Password should contain 6 or more characters'
-                            : null;
-                      },
-                      controller: passwordInputController,
-                      obscureText: true,
-                    ),
-                    TextFormField(
-                      controller: passwordVerifyController,
-                      decoration: InputDecoration(hintText: 'Verify Password'),
-                      validator: (val) {
-                        return !(val == passwordInputController.text)
-                            ? 'Passwords do not match'
-                            : null;
-                      },
-                      obscureText: true,
+                    SizedBox(height: 10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colors['primary-light'].withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: TextFormField(
+                        controller: passwordVerifyController,
+                        decoration: InputDecoration(
+                            hintText: 'Verify Password',
+                            border: InputBorder.none,
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10)),
+                        validator: (val) {
+                          return !(val == passwordInputController.text)
+                              ? 'Passwords do not match'
+                              : null;
+                        },
+                        obscureText: true,
+                      ),
                     ),
                     FlatButton(
                       child: Text(
@@ -104,8 +147,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           setState(() => loading = true);
                           var result = await _auth.signUp(
                               emailInputController.text,
-                              passwordInputController.text,
-                              usernameInputController.text);
+                              passwordInputController.text);
                           if (result == null) {
                             setState(() {
                               loading = false;
@@ -113,7 +155,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               emailInputController.text = '';
                               passwordInputController.text = '';
                               passwordVerifyController.text = '';
-                              usernameInputController.text = '';
                             });
                           }
                         }

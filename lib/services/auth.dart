@@ -14,7 +14,7 @@ class AuthService {
     }
   }
 
-  Future signUp(String email, String password, String username) async {
+  Future signUp(String email, String password) async {
     try {
       var result = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
