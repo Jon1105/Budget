@@ -2,15 +2,11 @@
 
 - [ ] account: try@email.com; 123456
 
-
-
 - [ ] be able to edit purchases (if field is not entered, take previous value)
 
 - [ ] be able to edit user's name
 
-- [ ] fill in list of shops
-
-- [ ] onPurchasePress show all info regarding the specific purchase (complete date, category, description)
+- [ ] onPurchasePress show all info regarding the specific purchase (complete date, description)
 
 - [ ] ?? add a possibiltiy to create solo account with only 1 user (no info page), (anonymous sign in)
 

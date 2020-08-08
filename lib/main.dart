@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/authPage.dart';
 import 'package:flutter/material.dart';
@@ -37,12 +35,10 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final account = Provider.of<FirebaseUser>(context);
-    if (account == null) {
+    if (account == null)
       return AuthPage();
-    } else {
-      // var dataservice = DatabaseService(accountInfo.uid);
+    else
       return InfoPageWithProvider();
-    }
   }
 }
 
