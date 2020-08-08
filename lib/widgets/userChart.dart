@@ -4,6 +4,7 @@ import '../main.dart';
 import '../theme.dart';
 import '../models/user.dart';
 
+@deprecated
 class UserChart extends StatelessWidget {
   final User user;
 

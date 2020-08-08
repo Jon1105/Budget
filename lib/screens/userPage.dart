@@ -102,15 +102,6 @@ class UserPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    // IconButton(
-                    //     icon: Icon(Icons.insert_chart,
-                    //         size: 35, color: colors['accent-dark']),
-                    //     onPressed: () {
-                    //       setState(() {
-                    //         // showChart += 1;
-                    //       });
-                    //       // print(showChart);
-                    //     }),
                     IconButton(
                         icon: Icon(Icons.add,
                             size: 35, color: colors['accent-dark']),
@@ -137,172 +128,99 @@ class UserPage extends StatelessWidget {
     final descController = TextEditingController();
     final priceController = TextEditingController();
     final shopController = TextEditingController();
-    var _selectedCategory;
-
-    bool showMore = false;
-
-    List<DropdownMenuItem> menuItems = [];
-    for (var category in categories) {
-      menuItems.add(DropdownMenuItem(
-          value: category[0],
-          child: Row(
-            children: <Widget>[
-              category[1],
-              SizedBox(width: 5),
-              Text(firstUpper(category[0])),
-            ],
-          )));
-    }
-
     showDialog(
         context: context,
         builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0)),
-              child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-                  return Container(
-                    padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    // height: dialogHeight,
-                    width: 300,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+              // height: dialogHeight,
+              width: 300,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('Add a purchase', style: promptTitle),
+                  Form(
+                    key: _formKey,
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text('Add a purchase', style: promptTitle),
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              DropdownButtonFormField(
-                                hint: Text('Category'),
-                                items: menuItems,
-                                onChanged: (category) => setState(() {
-                                  _selectedCategory = category;
-                                  (category == 'other')
-                                      ? showMore = true
-                                      : showMore = showMore;
-                                }),
-                                value: _selectedCategory,
-                                validator: (val) =>
-                                    (val == null) ? 'Select a category' : null,
-                              ),
-                              TextFormField(
-                                decoration: InputDecoration(hintText: 'Amount'),
-                                controller: priceController,
-                                keyboardType: TextInputType.number,
-                                validator: (val) {
-                                  if (val != '' &&
-                                      (double.parse(val) >= 0.005 ||
-                                          double.parse(val) < 0)) {
-                                    return null;
-                                  }
-                                  return 'Enter a valid amount';
-                                },
-                              ),
-                              !showMore
-                                  ? Container()
-                                  : Column(
-                                      children: <Widget>[
-                                        TextFormField(
-                                          decoration: InputDecoration(
-                                              hintText: 'Name*'),
-                                          controller: descController,
-                                        ),
-                                        AutoCompleteTextField<String>(
-                                          itemSubmitted: (item) =>
-                                              shopController.text = item,
-                                          controller: shopController,
-                                          key: _autoCompleteTextKey,
-                                          clearOnSubmit: false,
-                                          submitOnSuggestionTap: true,
-                                          suggestions: shops,
-                                          itemSorter: (a, b) {
-                                            return;
-                                          },
-                                          itemFilter: (item, query) {
-                                            return (item != query)
-                                                ? item.toLowerCase().contains(
-                                                    query.toLowerCase())
-                                                : null;
-                                          },
-                                          itemBuilder: (context, item) {
-                                            return Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(item,
-                                                  style: dropdownItemText),
-                                            );
-                                          },
-                                          style: TextStyle(),
-                                          decoration: InputDecoration(
-                                              hintText: 'Shop*'),
-                                        ),
-                                      ],
-                                    ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  FlatButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        showMore = !showMore;
-                                      });
-                                      print(showMore);
-                                    },
-                                    child: Text(
-                                      showMore ? 'Less' : 'More',
-                                      style: linkText.copyWith(fontSize: 12),
-                                    ),
-                                  ),
-                                  FlatButton(
-                                      child: Text('Continue',
-                                          style: promptSubmitText),
-                                      onPressed: () async {
-                                        if (_formKey.currentState.validate()) {
-                                          var account =
-                                              Provider.of<FirebaseUser>(context,
-                                                  listen: false);
-                                          var dataservice =
-                                              DatabaseService(account.uid);
+                        TextFormField(
+                          decoration: InputDecoration(hintText: 'Amount'),
+                          controller: priceController,
+                          keyboardType: TextInputType.number,
+                          validator: (val) {
+                            if (val != '' &&
+                                (double.parse(val) >= 0.005 ||
+                                    double.parse(val) < 0)) {
+                              return null;
+                            }
+                            return 'Enter a valid amount';
+                          },
+                        ),
+                        TextFormField(
+                          decoration: InputDecoration(hintText: 'Name'),
+                          controller: descController,
+                          validator: (val) {
+                            if (val == '' || val == null) return 'Enter a name';
+                            return null;
+                          },
+                        ),
+                        AutoCompleteTextField<String>(
+                          itemSubmitted: (item) => shopController.text = item,
+                          controller: shopController,
+                          key: _autoCompleteTextKey,
+                          clearOnSubmit: false,
+                          submitOnSuggestionTap: true,
+                          suggestions: shops,
+                          itemSorter: (a, b) {
+                            return;
+                          },
+                          itemFilter: (item, query) {
+                            return (item != query)
+                                ? item
+                                    .toLowerCase()
+                                    .contains(query.toLowerCase())
+                                : null;
+                          },
+                          itemBuilder: (context, item) {
+                            return Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(item, style: dropdownItemText),
+                            );
+                          },
+                          style: TextStyle(),
+                          decoration: InputDecoration(hintText: 'Shop*'),
+                        ),
+                        FlatButton(
+                            child: Text('Continue', style: promptSubmitText),
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                var account = Provider.of<FirebaseUser>(context,
+                                    listen: false);
+                                var dataservice = DatabaseService(account.uid);
 
-                                          Navigator.of(context).pop(context);
-                                          await dataservice
-                                              .updateAccountPurchases(
-                                                  id: userID,
-                                                  purchase: {
-                                                'category': _selectedCategory ??
-                                                    'other',
-                                                'price': (_selectedCategory ==
-                                                        'gain')
-                                                    ? (num.parse(priceController
-                                                                    .text
-                                                                    .replaceAll(
-                                                                        ' ',
-                                                                        ''))
-                                                                .abs() *
-                                                            -1)
-                                                        .toString()
-                                                    : priceController.text
-                                                        .replaceAll(' ', ''),
-                                                'name': descController.text,
-                                                'shop': shopController.text,
-                                                'date': Timestamp.now()
-                                              });
-                                          // if (result == null) {
-                                          //   print('FAIL Create Purchase');
-                                          // }
-                                        }
-                                      }),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
+                                Navigator.of(context).pop(context);
+                                await dataservice.updateAccountPurchases(
+                                    id: userID,
+                                    purchase: {
+                                      'price': priceController.text
+                                          .replaceAll(' ', ''),
+                                      'name': descController.text,
+                                      'shop': shopController.text,
+                                      'date': Timestamp.now()
+                                    });
+                                // if (result == null) {
+                                //   print('FAIL Create Purchase');
+                                // }
+                              }
+                            }),
                       ],
                     ),
-                  );
-                },
+                  )
+                ],
               ),
-            ));
+            )));
   }
 }

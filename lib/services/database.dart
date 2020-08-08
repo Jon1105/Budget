@@ -91,7 +91,6 @@ class DatabaseService {
         ? await accountReference.document('user - $id').updateData({
             'purchases': FieldValue.arrayUnion([
               {
-                'category': purchase['category'],
                 'name': purchase['name'],
                 'price': priceReturn.replaceAll(' ', ''),
                 'shop': purchase['shop'],
@@ -102,7 +101,6 @@ class DatabaseService {
         : await accountReference.document('user - $id').updateData({
             'purchases': FieldValue.arrayRemove([
               {
-                'category': purchase['category'],
                 'name': purchase['name'],
                 'price': priceReturn.replaceAll(' ', ''),
                 'shop': purchase['shop'],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
-import 'customCard.dart';
 import 'package:intl/intl.dart';
 import '../theme.dart';
 import 'package:provider/provider.dart';
@@ -25,18 +24,6 @@ class PurchaseList extends StatelessWidget {
     }
     var account = Provider.of<FirebaseUser>(context);
     DatabaseService dataservice = DatabaseService(account.uid);
-    List<DropdownMenuItem> menuItems = [];
-    for (var category in categories) {
-      menuItems.add(DropdownMenuItem(
-          value: category[0],
-          child: Row(
-            children: <Widget>[
-              category[1],
-              SizedBox(width: 5),
-              Text(firstUpper(category[0])),
-            ],
-          )));
-    }
 
     return Expanded(
       child: Container(
@@ -91,7 +78,6 @@ class PurchaseList extends StatelessWidget {
                         id: userID,
                         del: true,
                         purchase: {
-                          'category': user.purchases[index]["category"],
                           'price': user.purchases[index]["price"].toString(),
                           'name': user.purchases[index]["name"],
                           'shop': user.purchases[index]["shop"],
@@ -113,11 +99,8 @@ class PurchaseList extends StatelessWidget {
                     ),
                   ),
                   child: ListTile(
-                    title: (user.purchases[index]['name'] != '')
-                        ? Text(firstUpper(user.purchases[index]['name']),
-                            style: cardTitle)
-                        : Text(firstUpper(user.purchases[index]['category']),
-                            style: cardTitle),
+                    title: Text(firstUpper(user.purchases[index]['name']),
+                        style: cardTitle),
                     subtitle: Text(
                         DateFormat('MMM dd, KK:mm a')
                             .format(user.purchases[index]['date'].toDate()),
@@ -141,30 +124,6 @@ class PurchaseList extends StatelessWidget {
                               ])
                             : Text('\$${user.purchases[index]["price"]}',
                                 style: mainPriceText),
-                    // child: Row(
-                    //   children: <Widget>[
-                    //     Column(
-                    //         crossAxisAlignment: CrossAxisAlignment.start,
-                    //         children: <Widget>[
-
-                    //           (user.purchases[index]['name'] != '')
-                    //               ? Text(
-                    //                   firstUpper(
-                    //                       user.purchases[index]['category']),
-                    //                   style: boldBodyText)
-                    //               : Container(),
-
-                    //           (user.purchases[index]['shop'] != '')
-                    //               ? Text(user.purchases[index]['shop'],
-                    //                   style: bodyText)
-                    //               : Container()
-                    //         ]),
-                    //     Expanded(child: Container()),
-                    //     // Price
-
-                    //   ],
-                    // ),
-                    // EdgeInsets.fromLTRB(25, 15, 15, 15)
                   ),
                 ),
               );
