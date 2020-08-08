@@ -15,6 +15,7 @@ class UserChart extends StatelessWidget {
     List<PieChartSectionData> _sections = [];
 
     Map _totals = {};
+    List<List> categories = [];
 
     for (var catList in categories) {
       _totals[catList[0]] = 0;

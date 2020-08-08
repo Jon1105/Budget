@@ -10,22 +10,6 @@ String firstUpper(String string) {
   return string[0].toUpperCase() + string.substring(1);
 }
 
-List<List> categories = [
-  ['food', Icon(Icons.fastfood), Color.fromRGBO(230, 158, 34, 1)],
-  ['clothing', Icon(Icons.shopping_basket), Color.fromRGBO(225, 197, 240, 1)],
-  ['electronic', Icon(Icons.computer), Color.fromRGBO(79, 224, 173, 1)],
-  ['accessory', Icon(Icons.blur_circular), Color.fromRGBO(206, 212, 106, 1)],
-  ['transportation', Icon(Icons.local_taxi), Color.fromRGBO(114, 180, 242, 1)],
-  ['entertainement', Icon(Icons.movie), Color.fromRGBO(153, 31, 143, 1)],
-  ['toy', Icon(Icons.toys), Color.fromRGBO(199, 115, 74, 1)],
-  ['gain', Icon(Icons.attach_money), Color.fromRGBO(119, 230, 34, 1)],
-  [
-    'other',
-    Icon(Icons.radio_button_unchecked),
-    Color.fromRGBO(143, 165, 176, 1)
-  ]
-];
-
 void navUserPage(context, user) {
   Navigator.of(context).push(PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
@@ -69,18 +53,6 @@ class MyApp extends StatelessWidget {
             buttonTheme: ButtonThemeData(
               minWidth: 20,
             ),
-            // primarySwatch: MaterialColor(1, {
-            //   50: Color(),
-            //   100: Color(),
-            //   200: Color(),
-            //   300: Color(),
-            //   400: Color(0xFF40cfcf),
-            //   500: Color(0xFF33a3a3),
-            //   600: Color(0xFF2c8a8a),
-            //   700: Color(),
-            //   800: Color(),
-            //   900: Color(),
-            // }),
           ),
         ));
   }
@@ -90,7 +62,6 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    // DeviceOrientation.portraitDown,
   ]);
   runApp(MyApp());
 }
