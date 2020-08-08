@@ -33,6 +33,8 @@ class UserPageHeader extends StatelessWidget {
                         Text(
                           'HK\$ ${user.total}',
                           style: bodyText.copyWith(color: Colors.white),
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
                         ),
                       ],
                     )
@@ -42,6 +44,8 @@ class UserPageHeader extends StatelessWidget {
                         Text(
                           'HK\$ ${-user.total}',
                           style: bodyText.copyWith(color: Colors.white),
+                          maxLines: 1,
+                          // overflow: TextOverflow.,
                         ),
                       ],
                     ),

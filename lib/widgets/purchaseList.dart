@@ -80,7 +80,6 @@ class PurchaseList extends StatelessWidget {
                         purchase: {
                           'price': user.purchases[index]["price"].toString(),
                           'name': user.purchases[index]["name"],
-                          'shop': user.purchases[index]["shop"],
                           'date': user.purchases[index]["date"]
                         });
                     if (result == null) {
@@ -108,20 +107,19 @@ class PurchaseList extends StatelessWidget {
                     trailing: (user.purchases[index]['price'] == 0)
                         ? Text('\$0', style: mainPriceText)
                         : priceIsNegative
-                            ? Row(children: <Widget>[
-                                Icon(
-                                  Icons.add_circle,
-                                  color: Colors.green[300],
-                                ),
-                                SizedBox(
-                                  width: 2,
-                                ),
-                                Text(
-                                  '\$${-user.purchases[index]["price"]}',
-                                  style: mainPriceText.copyWith(
-                                      color: Colors.green[300]),
-                                )
-                              ])
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                    Icon(
+                                      Icons.add_circle,
+                                      color: Colors.green[300],
+                                    ),
+                                    Text(
+                                      '\$${-user.purchases[index]["price"]}',
+                                      style: mainPriceText.copyWith(
+                                          color: Colors.green[300]),
+                                    )
+                                  ])
                             : Text('\$${user.purchases[index]["price"]}',
                                 style: mainPriceText),
                   ),

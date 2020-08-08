@@ -93,7 +93,6 @@ class DatabaseService {
               {
                 'name': purchase['name'],
                 'price': priceReturn.replaceAll(' ', ''),
-                'shop': purchase['shop'],
                 'date': purchase['date']
               }
             ])
@@ -103,7 +102,6 @@ class DatabaseService {
               {
                 'name': purchase['name'],
                 'price': priceReturn.replaceAll(' ', ''),
-                'shop': purchase['shop'],
                 'date': purchase['date']
               }
             ])

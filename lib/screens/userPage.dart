@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import '../theme.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
@@ -8,10 +7,8 @@ import '../main.dart';
 import 'package:provider/provider.dart';
 import '../services/database.dart';
 import 'dart:core';
-import '../shops.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/userPageHeader.dart';
-import '../widgets/userChart.dart';
 
 class UserPageWithProvider extends StatelessWidget {
   final String userID;
@@ -43,10 +40,6 @@ class UserPageWithProvider extends StatelessWidget {
 class UserPage extends StatelessWidget {
   final String userID;
   UserPage(this.userID);
-
-  // String error = '';
-  // int showChart = 0;
-
   @override
   Widget build(BuildContext context) {
     List<User> usersList = Provider.of<List<User>>(context);
@@ -57,7 +50,6 @@ class UserPage extends StatelessWidget {
         break;
       }
     }
-    // assert(user != null);
 
     List<int> spendable = Provider.of<List<int>>(context);
 
@@ -123,11 +115,8 @@ class UserPage extends StatelessWidget {
 
   void createPurchase(BuildContext context, User user) {
     final _formKey = GlobalKey<FormState>();
-    final _autoCompleteTextKey =
-        GlobalKey<AutoCompleteTextFieldState<String>>();
     final descController = TextEditingController();
     final priceController = TextEditingController();
-    final shopController = TextEditingController();
     showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -160,38 +149,12 @@ class UserPage extends StatelessWidget {
                           },
                         ),
                         TextFormField(
-                          decoration: InputDecoration(hintText: 'Name'),
+                          decoration: InputDecoration(hintText: 'Description'),
                           controller: descController,
                           validator: (val) {
                             if (val == '' || val == null) return 'Enter a name';
                             return null;
                           },
-                        ),
-                        AutoCompleteTextField<String>(
-                          itemSubmitted: (item) => shopController.text = item,
-                          controller: shopController,
-                          key: _autoCompleteTextKey,
-                          clearOnSubmit: false,
-                          submitOnSuggestionTap: true,
-                          suggestions: shops,
-                          itemSorter: (a, b) {
-                            return;
-                          },
-                          itemFilter: (item, query) {
-                            return (item != query)
-                                ? item
-                                    .toLowerCase()
-                                    .contains(query.toLowerCase())
-                                : null;
-                          },
-                          itemBuilder: (context, item) {
-                            return Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(item, style: dropdownItemText),
-                            );
-                          },
-                          style: TextStyle(),
-                          decoration: InputDecoration(hintText: 'Shop*'),
                         ),
                         FlatButton(
                             child: Text('Continue', style: promptSubmitText),
@@ -208,12 +171,8 @@ class UserPage extends StatelessWidget {
                                       'price': priceController.text
                                           .replaceAll(' ', ''),
                                       'name': descController.text,
-                                      'shop': shopController.text,
                                       'date': Timestamp.now()
                                     });
-                                // if (result == null) {
-                                //   print('FAIL Create Purchase');
-                                // }
                               }
                             }),
                       ],

@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'screens/authPage.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +7,14 @@ import 'package:provider/provider.dart';
 import 'screens/InfoPage.dart';
 import 'screens/userPage.dart';
 import 'package:flutter/services.dart';
+import 'dart:math';
 
 String firstUpper(String string) {
   return string[0].toUpperCase() + string.substring(1);
 }
+
+double toDecimalPlaces(double number, int decimalPlaces) =>
+    (number * (pow(10, decimalPlaces))).round() / pow(10, decimalPlaces);
 
 void navUserPage(context, user) {
   Navigator.of(context).push(PageRouteBuilder(

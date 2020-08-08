@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'package:Budget2/main.dart';
+
 class User {
   String id;
   final String name;
@@ -18,5 +21,6 @@ class User {
         spent += num.parse(purchase['price']);
       }
     });
+    total = toDecimalPlaces(total, 2);
   }
 }
