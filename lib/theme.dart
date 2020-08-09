@@ -1,56 +1,56 @@
 import 'package:flutter/material.dart';
 
-TextStyle appBarText = TextStyle(fontSize: 25, fontFamily: 'UbuntuBold');
+var appBarText = TextStyle(fontSize: 25, fontFamily: 'UbuntuBold');
 
-TextStyle cardTitle = TextStyle(
+var cardTitle = TextStyle(
   fontSize: 20,
   fontFamily: 'UbuntuMed',
 );
 
-TextStyle linkText = TextStyle(
+var linkText = TextStyle(
   color: Colors.blue,
   decoration: TextDecoration.underline,
   fontSize: 15,
 );
 
-TextStyle promptTitle = TextStyle(
+var promptTitle = TextStyle(
   fontFamily: 'UbuntuMed',
   fontSize: 20,
   fontWeight: FontWeight.w700,
 );
 
-TextStyle bodyText = TextStyle();
+var bodyText = TextStyle();
 
-TextStyle italicBodyText = TextStyle(fontFamily: 'UbuntuItalic');
+var italicBodyText = TextStyle(fontFamily: 'UbuntuItalic');
 
-TextStyle boldBodyText =
+var boldBodyText =
     TextStyle(fontFamily: 'UbuntuBold', color: colors['primary']);
 
-TextStyle promptSubmitText = TextStyle(
+var promptSubmitText = TextStyle(
   fontFamily: 'UbuntuMedItalic',
   color: Colors.blue,
 );
 
-TextStyle mainPriceText = TextStyle(
+var mainPriceText = TextStyle(
   color: colors['accent'],
   fontSize: 20,
 );
 
-TextStyle drawerItemText = TextStyle(
+var drawerItemText = TextStyle(
   fontFamily: 'UbuntuMed',
   fontSize: 20,
 );
 
-TextStyle errorText = TextStyle(
+var errorText = TextStyle(
   color: Colors.red,
 );
 
-TextStyle dropdownItemText = TextStyle(
+var dropdownItemText = TextStyle(
   color: Colors.grey,
   fontSize: 16,
 );
 
-TextStyle hintTextStyle = TextStyle(
+var hintTextStyle = TextStyle(
   color: Colors.grey[600],
   fontSize: 16,
 );
