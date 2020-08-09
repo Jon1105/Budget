@@ -68,6 +68,7 @@ class PurchaseList extends StatelessWidget {
                       ]);
                   if (result == 1) {
                     print('Editing');
+                    editPurchase(context, user.purchases[index]);
                   }
                 },
                 child: Dismissible(
@@ -130,5 +131,94 @@ class PurchaseList extends StatelessWidget {
             ),
       )),
     );
+  }
+
+  void editPurchase(BuildContext context, Map purchase) {
+    final _formKey = GlobalKey<FormState>();
+    final descController = TextEditingController();
+    final priceController = TextEditingController();
+
+    descController.text = purchase['name'];
+    priceController.text = purchase['price'].toString();
+
+    showDialog(
+        context: context,
+        builder: (context) => Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) =>
+                  Container(
+                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                // height: dialogHeight,
+                width: 300,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Edit purchase', style: promptTitle),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TextFormField(
+                            decoration: InputDecoration(hintText: 'Amount'),
+                            controller: priceController,
+                            keyboardType: TextInputType.number,
+                            validator: (val) {
+                              if (val != '' &&
+                                  (double.parse(val) >= 0.005 ||
+                                      double.parse(val) < 0)) {
+                                return null;
+                              }
+                              return 'Enter a valid amount';
+                            },
+                          ),
+                          TextFormField(
+                            decoration:
+                                InputDecoration(hintText: 'Description'),
+                            controller: descController,
+                            validator: (val) {
+                              if (val == '' || val == null)
+                                return 'Enter a name';
+                              return null;
+                            },
+                          ),
+                          FlatButton(
+                              child: Text('Continue', style: promptSubmitText),
+                              onPressed: () async {
+                                if (_formKey.currentState.validate()) {
+                                  var account = Provider.of<FirebaseUser>(
+                                      context,
+                                      listen: false);
+                                  var dataservice =
+                                      DatabaseService(account.uid);
+
+                                  Navigator.of(context).pop(context);
+                                  await dataservice.updateAccountPurchases(
+                                      id: userID,
+                                      purchase: {
+                                        'name': purchase['name'],
+                                        'price': purchase['price'].toString(),
+                                        'date': purchase['date']
+                                      },
+                                      del: true);
+                                  await dataservice.updateAccountPurchases(
+                                      id: userID,
+                                      purchase: {
+                                        'price': priceController.text
+                                            .replaceAll(' ', ''),
+                                        'name': descController.text,
+                                        'date': purchase['date']
+                                      });
+                                }
+                              }),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )));
   }
 }

@@ -1,5 +1,4 @@
-import 'dart:math';
-import 'package:Budget2/main.dart';
+import 'package:Budget/main.dart';
 
 class User {
   String id;

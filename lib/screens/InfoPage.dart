@@ -1,3 +1,4 @@
+import 'package:Budget/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../theme.dart';
 import 'package:flutter/material.dart';
@@ -52,26 +53,25 @@ class _InfoPageState extends State<InfoPage> {
               onPressed: () async {
                 showDialog(
                     context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Confirm Sign Out"),
-                        content: Text('Are you sure you want to sign out?'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('Cancel'),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          FlatButton(
-                            child: Text('Sign Out',
-                                style: TextStyle(color: Colors.red)),
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              await _auth.signOut();
-                            },
-                          )
-                        ],
-                      );
-                    });
+                    builder: (BuildContext context) => SimpleDialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          title: Text('Confirm Sign Out'),
+                          children: [
+                            SimpleDialogOption(
+                              onPressed: Navigator.of(context).pop,
+                              child: Text('Cancel', style: errorText),
+                            ),
+                            SimpleDialogOption(
+                              child: Text('Sign Out',
+                                  style: TextStyle(color: Colors.blue)),
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                await _auth.signOut();
+                              },
+                            )
+                          ],
+                        ));
               })
         ],
       ),
