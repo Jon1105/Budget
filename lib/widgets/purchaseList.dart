@@ -34,7 +34,7 @@ class PurchaseList extends StatelessWidget {
         },
         child: ListView.builder(
             itemCount: user.purchases.length,
-            reverse: true,
+            reverse: false,
             itemBuilder: (BuildContext context, int index) {
               bool priceIsNegative = user.purchases[index]["price"] < 0;
               var _tapPosition;
