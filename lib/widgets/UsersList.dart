@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'customCard.dart';
 import '../theme.dart';
 import 'package:provider/provider.dart';
@@ -86,7 +87,18 @@ class UserInfoCard extends StatelessWidget {
                           controller: ctrlr,
                           autofocus: true,
                           keyboardType: TextInputType.name,
+                          // validator: (String val) {
+                          //   if (val != '')
+                          //     return null;
+                          //   else
+                          //     return 'invalid';
+                          // },
                           onFieldSubmitted: (String val) async {
+                            if (val == '') {
+                              HapticFeedback.heavyImpact();
+                              print('Tried Vibration');
+                              return;
+                            }
                             assert(val == ctrlr.text);
                             Navigator.of(context).pop();
                             await dataservice.editUserName(
@@ -99,14 +111,10 @@ class UserInfoCard extends StatelessWidget {
                               border: InputBorder.none,
                               suffixIcon: GestureDetector(
                                 child: Icon(
-                                  Icons.check,
+                                  Icons.clear,
                                   // size: 16,
                                 ),
-                                onTap: () async {
-                                  Navigator.of(context).pop();
-                                  await dataservice.editUserName(
-                                      id: user.id, newName: ctrlr.text);
-                                },
+                                onTap: Navigator.of(context).pop,
                               )),
                         ),
                       ),

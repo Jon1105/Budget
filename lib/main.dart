@@ -53,6 +53,8 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: Wrapper(), //Link to user auth (return user.isAdmin)
           theme: ThemeData(
+            scaffoldBackgroundColor: Colors.white,
+            canvasColor: Colors.transparent,
             fontFamily: 'Ubuntu',
             buttonTheme: ButtonThemeData(
               minWidth: 20,

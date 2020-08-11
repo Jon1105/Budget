@@ -4,10 +4,10 @@
 
 - [ ] improve Purchase editing (use index instead of deleting & recreating)
 
-- [ ] Add a currency converter
 
 #### Done
 
+- [ ] ~~Add a currency converter~~
 - [ ] ~~add a possibiltiy to create solo account with only 1 user (no info page), (anonymous sign in)~~
 - [ ] ~~fill in list of shops~~
 - [ ] ~~onPurchasePress show all info regarding the specific purchase (complete date, category, description)~~
