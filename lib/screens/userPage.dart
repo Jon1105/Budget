@@ -3,12 +3,12 @@ import '../theme.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../widgets/purchaseList.dart';
-import '../main.dart';
 import 'package:provider/provider.dart';
 import '../services/database.dart';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/userPageHeader.dart';
+import 'package:flutter/services.dart';
 
 class UserPageWithProvider extends StatelessWidget {
   final String userID;
@@ -47,14 +47,25 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final _formKey = GlobalKey<FormState>();
-  final descController = TextEditingController();
-  final priceController = TextEditingController();
+  GlobalKey<FormState> _formKey;
+  TextEditingController descController;
+  TextEditingController priceController;
+  FocusNode createNode;
+
+  @override
+  void initState() {
+    _formKey = GlobalKey<FormState>();
+    descController = TextEditingController();
+    priceController = TextEditingController();
+    createNode = FocusNode();
+    super.initState();
+  }
 
   @override
   void dispose() {
     descController.dispose();
     priceController.dispose();
+    createNode.dispose();
     super.dispose();
   }
 
@@ -83,7 +94,7 @@ class _UserPageState extends State<UserPage> {
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              automaticallyImplyLeading: false,
+              automaticallyImplyLeading: true,
               centerTitle: false,
               elevation: 0,
               backgroundColor: colors['primary-dark'],
@@ -112,13 +123,13 @@ class _UserPageState extends State<UserPage> {
             floatingActionButton: FloatingActionButton(
                 backgroundColor: colors['accent-dark'],
                 child: Icon(Icons.attach_money),
-                onPressed: createUser),
+                onPressed: createPurchase),
           );
   }
 
-  Future createUser() async {
+  Future createPurchase() async {
     if (descController.text != '' || priceController.text != '') {
-      try {
+      if (_formKey.currentState != null) {
         if (_formKey.currentState.validate()) {
           var account = Provider.of<FirebaseUser>(context, listen: false);
           var dataservice = DatabaseService(account.uid);
@@ -131,10 +142,10 @@ class _UserPageState extends State<UserPage> {
             'date': Timestamp.now()
           });
         }
-      } catch (_) {
+      } else {
         descController.text = '';
         priceController.text = '';
-        createUser();
+        createPurchase();
       }
     } else
       _scaffoldKey.currentState.showBottomSheet((BuildContext _) {
@@ -155,8 +166,11 @@ class _UserPageState extends State<UserPage> {
                       if (val == '' || val == null) return 'Enter a name';
                       return null;
                     },
+                    textInputAction: TextInputAction.go,
+                    onEditingComplete: createNode.requestFocus,
                     controller: descController,
                     autofocus: true,
+                    keyboardType: TextInputType.name,
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
@@ -170,9 +184,23 @@ class _UserPageState extends State<UserPage> {
                       borderRadius: BorderRadius.circular(15)),
                   width: 100,
                   child: TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.deny(
+                          RegExp(r'[ /:;()$&@//",?!a-zA-Z]'))
+                    ],
+                    // inputFormatters: [
+                    //   FilteringTextInputFormatter.allow(
+                    //       RegExp(r'^-?[0-9]\d*(\.\d+)?$'))
+                    // ],
+                    keyboardType: TextInputType.numberWithOptions(
+                        decimal: true, signed: true),
+                    textInputAction: TextInputAction.go,
                     controller: priceController,
-                    keyboardType: TextInputType.number,
+                    onEditingComplete: createPurchase,
+                    focusNode: createNode,
                     validator: (val) {
+                      if (double.tryParse(val) == null) return 'Not a number';
+
                       if (val != '' &&
                           (double.parse(val) >= 0.005 ||
                               double.parse(val) < 0)) {

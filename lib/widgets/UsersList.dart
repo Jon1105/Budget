@@ -22,13 +22,16 @@ class _CustomUserListState extends State<CustomUserList> {
     return Theme(
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),
       child: NotificationListener<OverscrollIndicatorNotification>(
-        onNotification: (OverscrollIndicatorNotification overscroll) {
-          overscroll.disallowGlow();
-          return;
-        },
-        child: ListView(
-            children: accountInfo.map((user) => UserInfoCard(user)).toList()),
-      ),
+          onNotification: (OverscrollIndicatorNotification overscroll) {
+            overscroll.disallowGlow();
+            return;
+          },
+          child: (accountInfo.isEmpty)
+              ? Center(child: Text('No users'))
+              : ListView(
+                  children: accountInfo
+                      .map<Widget>((user) => UserInfoCard(user))
+                      .toList())),
     );
   }
 }
@@ -67,45 +70,52 @@ class UserInfoCard extends StatelessWidget {
           navUserPage(context, user);
         },
         onLongPress: () {
-          Scaffold.of(context).showBottomSheet((BuildContext context) {
-            var ctrlr = TextEditingController();
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 25),
-              decoration: BoxDecoration(
-                  color: colors['primary'].withOpacity(0.8),
-                  // boxShadow: [BoxShadow(offset: Offset(0, 2), color: Colors.grey[600])],
-                  borderRadius: BorderRadius.circular(20)),
-              padding: const EdgeInsets.all(13),
-              child: SizedBox(
-                height: 32,
-                child: Center(
-                  child: TextField(
-                    textInputAction: TextInputAction.unspecified,
-                    controller: ctrlr,
-                    autofocus: true,
-                    keyboardType: TextInputType.name,
-                    onSubmitted: Navigator.of(context).pop,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.zero,
-                        hintText: 'Edit Name',
-                        border: InputBorder.none,
-                        suffixIcon: GestureDetector(
-                          child: Icon(
-                            Icons.check,
-                            // size: 16,
-                          ),
-                          onTap: () async {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                var ctrlr = TextEditingController();
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Container(
+                    height: 42,
+                    padding: EdgeInsets.fromLTRB(20, 5, 5, 5),
+                    child: Center(
+                      child: Expanded(
+                        child: TextFormField(
+                          controller: ctrlr,
+                          autofocus: true,
+                          keyboardType: TextInputType.name,
+                          onFieldSubmitted: (String val) async {
+                            assert(val == ctrlr.text);
                             Navigator.of(context).pop();
                             await dataservice.editUserName(
-                                id: user.id, newName: ctrlr.text);
+                                id: user.id, newName: val);
                           },
-                        )),
+                          decoration: InputDecoration(
+                              // contentPadding:
+                              //     EdgeInsets.symmetric(horizontal: 10),
+                              hintText: 'Edit Name',
+                              border: InputBorder.none,
+                              suffixIcon: GestureDetector(
+                                child: Icon(
+                                  Icons.check,
+                                  // size: 16,
+                                ),
+                                onTap: () async {
+                                  Navigator.of(context).pop();
+                                  await dataservice.editUserName(
+                                      id: user.id, newName: ctrlr.text);
+                                },
+                              )),
+                        ),
+                      ),
+                    ),
+
+                    //
                   ),
-                ),
-              ),
-              //
-            );
-          });
+                );
+              });
         },
         child: CustomCard(
             Column(children: <Widget>[

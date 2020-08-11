@@ -53,6 +53,7 @@ class _InfoPageState extends State<InfoPage> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text('Budget Info', style: appBarText),
           elevation: 0,
           backgroundColor: colors['primary-dark'],
@@ -133,6 +134,8 @@ class _InfoPageState extends State<InfoPage> {
                         },
                         controller: nameController,
                         autofocus: true,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (String val) => createUser(),
                         decoration: InputDecoration(
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.symmetric(horizontal: 5),
