@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../main.dart';
 import '../services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 
 class PurchaseList extends StatelessWidget {
   final String userID;
@@ -131,90 +132,185 @@ class PurchaseList extends StatelessWidget {
 
   void editPurchase(BuildContext context, Map purchase) {
     final _formKey = GlobalKey<FormState>();
-    final descController = TextEditingController();
-    final priceController = TextEditingController();
+    final descController = TextEditingController(text: purchase['name']);
+    final priceController =
+        TextEditingController(text: purchase['price'].toString());
 
-    descController.text = purchase['name'];
-    priceController.text = purchase['price'].toString();
+    Scaffold.of(context).showBottomSheet((BuildContext context) {
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 25),
+        decoration: BoxDecoration(
+            color: colors['primary'].withOpacity(0.8),
+            // boxShadow: [BoxShadow(offset: Offset(0, 2), color: Colors.grey[600])],
+            borderRadius: BorderRadius.circular(20)),
+        padding: const EdgeInsets.all(13),
+        child: Form(
+          key: _formKey,
+          child: Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.check),
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    var account =
+                        Provider.of<FirebaseUser>(context, listen: false);
+                    var dataservice = DatabaseService(account.uid);
 
-    showDialog(
-        context: context,
-        builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0)),
-            child: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) =>
-                  Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                // height: dialogHeight,
-                width: 300,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text('Edit purchase', style: promptTitle),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          TextFormField(
-                            decoration: InputDecoration(hintText: 'Amount'),
-                            controller: priceController,
-                            keyboardType: TextInputType.number,
-                            validator: (val) {
-                              if (val != '' &&
-                                  (double.parse(val) >= 0.005 ||
-                                      double.parse(val) < 0)) {
-                                return null;
-                              }
-                              return 'Enter a valid amount';
+                    Navigator.of(context).pop(context);
+                    dataservice
+                        .updateAccountPurchases(
+                            id: userID,
+                            purchase: {
+                              'name': purchase['name'],
+                              'price': purchase['price'].toString(),
+                              'date': purchase['date']
                             },
-                          ),
-                          TextFormField(
-                            decoration:
-                                InputDecoration(hintText: 'Description'),
-                            controller: descController,
-                            validator: (val) {
-                              if (val == '' || val == null)
-                                return 'Enter a name';
-                              return null;
-                            },
-                          ),
-                          FlatButton(
-                              child: Text('Continue', style: promptSubmitText),
-                              onPressed: () async {
-                                if (_formKey.currentState.validate()) {
-                                  var account = Provider.of<FirebaseUser>(
-                                      context,
-                                      listen: false);
-                                  var dataservice =
-                                      DatabaseService(account.uid);
-
-                                  Navigator.of(context).pop(context);
-                                  await dataservice.updateAccountPurchases(
-                                      id: userID,
-                                      purchase: {
-                                        'name': purchase['name'],
-                                        'price': purchase['price'].toString(),
-                                        'date': purchase['date']
-                                      },
-                                      del: true);
-                                  await dataservice.updateAccountPurchases(
-                                      id: userID,
-                                      purchase: {
-                                        'price': priceController.text
-                                            .replaceAll(' ', ''),
-                                        'name': descController.text,
-                                        'date': purchase['date']
-                                      });
-                                }
-                              }),
-                        ],
-                      ),
-                    )
-                  ],
+                            del: true)
+                        .then((_) {
+                      dataservice.updateAccountPurchases(id: userID, purchase: {
+                        'price': priceController.text.replaceAll(' ', ''),
+                        'name': descController.text,
+                        'date': purchase['date']
+                      });
+                    });
+                  }
+                },
+              ),
+              Expanded(
+                child: TextFormField(
+                  validator: (val) {
+                    if (val == '' || val == null) return 'Enter a name';
+                    return null;
+                  },
+                  textInputAction: TextInputAction.go,
+                  controller: descController,
+                  autofocus: true,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      hintText: 'Description'),
                 ),
               ),
-            )));
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(15)),
+                width: 100,
+                child: TextFormField(
+                  inputFormatters: [
+                    FilteringTextInputFormatter.deny(
+                        RegExp(r'[ /:;()$&@//",?!a-zA-Z]'))
+                  ],
+                  // inputFormatters: [
+                  //   FilteringTextInputFormatter.allow(
+                  //       RegExp(r'^-?[0-9]\d*(\.\d+)?$'))
+                  // ],
+                  keyboardType: TextInputType.numberWithOptions(
+                      decimal: true, signed: true),
+                  textInputAction: TextInputAction.go,
+                  controller: priceController,
+                  validator: (val) {
+                    if (double.tryParse(val) == null) return 'Not a number';
+
+                    if (val != '' &&
+                        (double.parse(val) >= 0.005 || double.parse(val) < 0)) {
+                      return null;
+                    }
+                    return 'Invalid amount';
+                  },
+                  decoration: InputDecoration(
+                      prefix: Text('\$'),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      hintText: 'Price'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+
+    // showDialog(
+    //     context: context,
+    //     builder: (context) => Dialog(
+    //         shape: RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(20.0)),
+    //         child: StatefulBuilder(
+    //           builder: (BuildContext context, StateSetter setState) =>
+    //               Container(
+    //             padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+    //             // height: dialogHeight,
+    //             width: 300,
+    //             child: Column(
+    //               mainAxisSize: MainAxisSize.min,
+    //               children: <Widget>[
+    //                 Text('Edit purchase', style: promptTitle),
+    //                 Form(
+    //                   key: _formKey,
+    //                   child: Column(
+    //                     mainAxisAlignment: MainAxisAlignment.center,
+    //                     children: <Widget>[
+    //                       TextFormField(
+    //                         decoration: InputDecoration(hintText: 'Amount'),
+    //                         controller: priceController,
+    //                         keyboardType: TextInputType.number,
+    //                         validator: (val) {
+    //                           if (val != '' &&
+    //                               (double.parse(val) >= 0.005 ||
+    //                                   double.parse(val) < 0)) {
+    //                             return null;
+    //                           }
+    //                           return 'Enter a valid amount';
+    //                         },
+    //                       ),
+    //                       TextFormField(
+    //                         decoration:
+    //                             InputDecoration(hintText: 'Description'),
+    //                         controller: descController,
+    //                         validator: (val) {
+    //                           if (val == '' || val == null)
+    //                             return 'Enter a name';
+    //                           return null;
+    //                         },
+    //                       ),
+    //                       FlatButton(
+    //                           child: Text('Continue', style: promptSubmitText),
+    //                           onPressed: () async {
+    //                             if (_formKey.currentState.validate()) {
+    //                               var account = Provider.of<FirebaseUser>(
+    //                                   context,
+    //                                   listen: false);
+    //                               var dataservice =
+    //                                   DatabaseService(account.uid);
+
+    //                               Navigator.of(context).pop(context);
+    //                               await dataservice.updateAccountPurchases(
+    //                                   id: userID,
+    //                                   purchase: {
+    //                                     'name': purchase['name'],
+    //                                     'price': purchase['price'].toString(),
+    //                                     'date': purchase['date']
+    //                                   },
+    //                                   del: true);
+    //                               await dataservice.updateAccountPurchases(
+    //                                   id: userID,
+    //                                   purchase: {
+    //                                     'price': priceController.text
+    //                                         .replaceAll(' ', ''),
+    //                                     'name': descController.text,
+    //                                     'date': purchase['date']
+    //                                   });
+    //                             }
+    //                           }),
+    //                     ],
+    //                   ),
+    //                 )
+    //               ],
+    //             ),
+    //           ),
+    //         )));
   }
 }

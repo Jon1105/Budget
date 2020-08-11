@@ -4,7 +4,7 @@ class User {
   String id;
   final String name;
   final bool isAdmin;
-  final List purchases;
+  final List<Map<String, dynamic>> purchases;
   double total = 0;
   double spent = 0;
 
