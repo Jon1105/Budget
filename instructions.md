@@ -1,6 +1,6 @@
 ## Todo
 
-- [ ] account: try@email.com; 123456
+account: try@email.com; 123456
 
 - [ ] improve Purchase editing (use index instead of deleting & recreating)
 
