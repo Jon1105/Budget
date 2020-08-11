@@ -14,12 +14,13 @@ class AuthService {
     }
   }
 
-  Future signUp(String email, String password) async {
+  Future<FirebaseUser> signUp(String email, String password) async {
     try {
       var result = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      DatabaseService(result.user.uid).setSpendable(10000, 8500);
-      DatabaseService(result.user.uid).newAccountUser(
+      var dataservice = DatabaseService(result.user.uid);
+      dataservice.setSpendable(-1, -1);
+      dataservice.newAccountUser(
         name: email.substring(0, email.indexOf('@')),
         isAdmin: true,
       );
@@ -29,11 +30,5 @@ class AuthService {
     }
   }
 
-  Future signOut() async {
-    try {
-      return await auth.signOut();
-    } catch (error) {
-      return null;
-    }
-  }
+  Future<void> signOut() async => await auth.signOut();
 }
