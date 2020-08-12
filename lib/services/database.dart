@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../main.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter/services.dart';
 
 class DatabaseService {
   CollectionReference accountReference;
@@ -15,36 +14,28 @@ class DatabaseService {
   }
 
   Stream<List<User>> get accountUsers {
-    try {
-      return accountReference
-          .orderBy('isAdmin', descending: true)
-          .snapshots()
-          .map<List<User>>((QuerySnapshot snapshot) {
-        List<User> users = [];
-        for (DocumentSnapshot doc in snapshot.documents) {
-          if (doc.data['name'] == 'spendable') continue;
-          users.add(User(
-            doc.data['id'],
-            name: doc.data['name'],
-            isAdmin: doc.data['isAdmin'] ?? false,
-            purchases: doc.data['purchases'],
-          ));
-        }
-        return users;
-      });
-    } on PlatformException catch (_) {
-      return null;
-    }
+    return accountReference
+        .orderBy('isAdmin', descending: true)
+        .snapshots()
+        .map<List<User>>((QuerySnapshot snapshot) {
+      List<User> users = [];
+      for (DocumentSnapshot doc in snapshot.documents) {
+        if (doc.data['name'] == 'spendable') continue;
+        users.add(User(
+          doc.data['id'],
+          name: doc.data['name'],
+          isAdmin: doc.data['isAdmin'] ?? false,
+          purchases: doc.data['purchases'],
+        ));
+      }
+      return users;
+    });
   }
 
   Stream<List<int>> get spendable {
-    try {
-      return accountReference.document('spendable').snapshots().map<List<int>>(
-          (DocumentSnapshot document) =>
-              [document.data['admin'], document.data['child']]);
-    } on PlatformException catch (_) {
-      return null;
-    }
+    return accountReference.document('spendable').snapshots().map<List<int>>(
+        (DocumentSnapshot document) =>
+            [document.data['admin'], document.data['child']]);
   }
 
   Future<void> setSpendable(int adminSpendable, int childSpendable) async =>
