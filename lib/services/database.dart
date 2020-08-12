@@ -10,17 +10,14 @@ class DatabaseService {
   String uid;
   DatabaseService(this.uid) {
     accountReference = Firestore.instance.collection(uid);
-    // spendableReference = Firestore.instance.collection('spendable - $uid');
   }
 
   Stream<List<User>> get accountUsers {
-    return accountReference
-        .orderBy('isAdmin', descending: true)
-        .snapshots()
-        .map<List<User>>((QuerySnapshot snapshot) {
+    return accountReference.snapshots().map((QuerySnapshot snapshot) {
       List<User> users = [];
       for (DocumentSnapshot doc in snapshot.documents) {
-        if (doc.data['name'] == 'spendable') continue;
+        if (doc.documentID == 'spendable') continue;
+        // print('Purchases: ${doc.data['purchases']}');
         users.add(User(
           doc.data['id'],
           name: doc.data['name'],

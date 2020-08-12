@@ -1,18 +1,20 @@
 import 'package:Budget/main.dart';
+import 'package:flutter/foundation.dart';
 
 class User {
   String id;
   final String name;
   final bool isAdmin;
-  final List<Map<String, dynamic>> purchases;
+  final List purchases;
   double total = 0;
   double spent = 0;
 
-  User(this.id, {this.name, this.isAdmin, this.purchases}) {
-    purchases.sort((a, b) {
+  User(this.id,
+      {@required this.name, @required this.isAdmin, @required this.purchases}) {
+    this.purchases.sort((a, b) {
       return b['date'].toDate().compareTo(a['date'].toDate());
     });
-    purchases.forEach((purchase) {
+    this.purchases.forEach((purchase) {
       if (purchase['price'].contains('-')) {
         total += -num.parse(purchase['price'].substring(1));
       } else {

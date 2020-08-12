@@ -82,46 +82,44 @@ class UserInfoCard extends StatelessWidget {
                     height: 42,
                     padding: EdgeInsets.fromLTRB(20, 5, 5, 5),
                     child: Center(
-                      child: Expanded(
-                        child: TextFormField(
-                          controller: ctrlr,
-                          autofocus: true,
-                          keyboardType: TextInputType.name,
-                          // validator: (String val) {
-                          //   if (val != '')
-                          //     return null;
-                          //   else
-                          //     return 'invalid';
-                          // },
-                          onFieldSubmitted: (String val) async {
-                            if (val == '') {
-                              HapticFeedback.heavyImpact();
-                              print('Tried Vibration');
-                              return;
-                            }
-                            assert(val == ctrlr.text);
-                            Navigator.of(context).pop();
-                            await dataservice.editUserName(
-                                id: user.id, newName: val);
-                          },
-                          decoration: InputDecoration(
-                              // contentPadding:
-                              //     EdgeInsets.symmetric(horizontal: 10),
-                              hintText: 'Edit Name',
-                              border: InputBorder.none,
-                              suffixIcon: GestureDetector(
-                                child: Icon(
-                                  Icons.clear,
-                                  // size: 16,
-                                ),
-                                onTap: Navigator.of(context).pop,
-                              )),
-                        ),
+                      child: TextField(
+                        controller: ctrlr,
+                        autofocus: true,
+                        keyboardType: TextInputType.name,
+                        // validator: (String val) {
+                        //   if (val != '')
+                        //     return null;
+                        //   else
+                        //     return 'invalid';
+                        // },
+                        onSubmitted: (String val) async {
+                          if (val == '') {
+                            HapticFeedback.heavyImpact();
+                            print('Tried Vibration');
+                            return;
+                          }
+                          assert(val == ctrlr.text);
+                          Navigator.of(context).pop();
+                          await dataservice.editUserName(
+                              id: user.id, newName: val);
+                        },
+                        decoration: InputDecoration(
+                            // contentPadding:
+                            //     EdgeInsets.symmetric(horizontal: 10),
+                            hintText: 'Edit Name',
+                            border: InputBorder.none,
+                            suffixIcon: GestureDetector(
+                              child: Icon(
+                                Icons.clear,
+                                // size: 16,
+                              ),
+                              onTap: Navigator.of(context).pop,
+                            )),
                       ),
                     ),
-
-                    //
                   ),
+
+                  //
                 );
               });
         },

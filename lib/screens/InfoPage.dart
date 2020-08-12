@@ -16,10 +16,12 @@ class InfoPageWithProvider extends StatelessWidget {
           initialData: [],
           value: DatabaseService(account.uid).accountUsers,
           lazy: false,
-          catchError: (ctx, obj) {
-            return null;
+          catchError: (BuildContext _, Object obj) {
+            print('Error: $obj');
+            return [];
           }),
       StreamProvider<List<int>>.value(
+          initialData: [-1, -1],
           value: DatabaseService(account.uid).spendable,
           lazy: false,
           catchError: (ctx, obj) {
