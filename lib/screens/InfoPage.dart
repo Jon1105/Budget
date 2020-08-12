@@ -93,7 +93,8 @@ class _InfoPageState extends State<InfoPage> {
                 })
           ],
         ),
-        body: Padding(padding: EdgeInsets.all(8), child: CustomUserList()),
+        body: Padding(
+            padding: EdgeInsets.fromLTRB(8, 8, 8, 0), child: CustomUserList()),
         floatingActionButton: FloatingActionButton(
             backgroundColor: colors['accent-dark'],
             onPressed: createUser,
