@@ -18,7 +18,7 @@ class _CustomUserListState extends State<CustomUserList> {
   @override
   Widget build(BuildContext context) {
     // var account = Provider.of<FirebaseUser>(context);
-    var accountInfo = Provider.of<List<User>>(context);
+    List<User> accountInfo = Provider.of<List<User>>(context);
 
     return Theme(
       data: Theme.of(context).copyWith(canvasColor: Colors.transparent),

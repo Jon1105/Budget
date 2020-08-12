@@ -16,14 +16,9 @@ class AuthService {
 
   Future<FirebaseUser> signUp(String email, String password) async {
     try {
-      var result = await auth.createUserWithEmailAndPassword(
+      AuthResult result = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      var dataservice = DatabaseService(result.user.uid);
-      dataservice.setSpendable(-1, -1);
-      dataservice.newAccountUser(
-        name: email.substring(0, email.indexOf('@')),
-        isAdmin: true,
-      );
+      DatabaseService(result.user.uid).setSpendable(-1, -1);
       return result.user;
     } catch (e) {
       return null;
